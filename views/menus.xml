@@ -1,0 +1,8 @@
+<odoo>
+
+    <menuitem id="menu_todo_list" name="Todo List" action="action_todo_list" sequence="5"/>
+    <menuitem id="menu_todo_list_all" name="All" parent="menu_todo_list" action="action_todo_list" sequence="10"/>
+    <menuitem id="menu_todo_list_uncomplete" name="Uncomplete" parent="menu_todo_list" action="action_todo_list_uncomplete" sequence="20"/>
+    <menuitem id="menu_todo_list_complete" name="Complete" parent="menu_todo_list" action="action_todo_list_complete" sequence="30"/>
+
+</odoo>

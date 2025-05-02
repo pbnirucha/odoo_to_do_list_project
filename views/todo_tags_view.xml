@@ -1,0 +1,38 @@
+<odoo>
+
+    <!-- Tags View -->
+    <record id="view_todo_tags_list" model="ir.ui.view">
+        <field name="name">todolist.tags.list</field>
+        <field name="model">todolist.tags</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="color" widget="color_picker" />
+            </list>
+        </field>
+    </record>
+
+
+    <!-- Tags Form -->
+    <record id="view_todo_tags_form" model="ir.ui.view">
+        <field name="name">todolist.tags.form</field>
+        <field name="model">todolist.tags</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="color" widget="color_picker" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+     <record id="action_todo_tags" model="ir.actions.act_window">
+        <field name="name">Tags</field>
+        <field name="res_model">todolist.tags</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    
+</odoo>

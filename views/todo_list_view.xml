@@ -1,0 +1,147 @@
+<odoo>
+
+    <!-- Todo List View -->
+    <record id="view_todo_tasks_list" model="ir.ui.view">
+        <field name="name">todolist.tasks.list</field>
+        <field name="model">todolist.tasks</field>
+        <field name="arch" type="xml">
+            
+            <list string="To-dos">
+                <field name="title"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="tags" 
+                       widget="many2many_tags" 
+                       options="{'color_field': 'color', 'no_create_edit': True}"/>
+                <!-- <field name="track_status"/>  -->
+            </list>
+        </field>
+    </record>
+
+    <!-- Todo List Form -->
+    <record id="view_todo_tasks_form" model="ir.ui.view">
+        <field name="name">todolist.tasks.form</field>
+        <field name="model">todolist.tasks</field>
+        <field name="arch" type="xml">
+            <form string="Todo List Form">
+                <header>
+                    <button name="button_in_progress" 
+                            track_status="draft" 
+                            string="PROGRESS"
+                            class="oe_highlight"
+                            type="object"
+                            invisible= "track_status != 'draft'" />
+
+                    <button name="button_done" 
+                            track_status="in_progress" 
+                            string="DONE"
+                            class="oe_highlight"
+                            type="object"
+                            invisible="invisible_btn_done" />
+                    
+                    <field name="track_status" 
+                           widget="statusbar" 
+                           statusbar_visible= "draft,in_progress,done"/>
+                </header>
+                <sheet>
+                    <group col="2">
+                        <group>
+                            <field name="title" readonly="track_status == 'done'"/>
+                            <field name="tags"
+                               readonly="track_status == 'done'"
+                               widget="many2many_tags" 
+                               options="{'color_field': 'color', 
+                                         'no_quick_create':True,
+                                         'no_create_edit':True,
+                                         'no_open': True,}"/>
+                        </group>
+                        <group>
+                            <field name="start_date" readonly="track_status == 'done'"/>
+                            <field name="end_date" readonly="track_status == 'done'"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+
+                        <!-- List -->
+                        <page name="todo_add_list" string="List">
+                            <field name="task_line_ids" readonly="track_status == 'done'">
+                                <list string="Add a line" editable="bottom">
+                                    <field name="task_name"/>
+                                    <field name="task_description"/>
+                                    <field name="task_is_complete" invisible="invisible_is_complete" /> 
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Attendee -->
+                        <page name="todo_add_attendee" string="Attendee">
+                            <field name="attendee_line_ids" readonly="track_status == 'done'">
+                                <list string="Add a line" editable="bottom">
+                                    <field name="attendee_name" 
+                                           widget="many2one_avatar_user" 
+                                           options="{'no_create_edit':True}" />
+                                </list>
+                            </field>
+                        </page>
+
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Todo List Search / Group By -->
+    <record id="view_todo_tasks_search" model="ir.ui.view">
+        <field name="name">todolist.tasks.search</field>
+        <field name="model">todolist.tasks</field>
+        <field name="arch" type="xml">
+            
+            <search string="To-dos Search">
+                <field name="track_status"/>
+                <filter name="all_record" string="All" domain="[('track_status', 'in', ['draft', 'in_progress', 'done'])]" />
+                <filter name="all_record" string="Complete" domain="[('track_status', '=', 'done')]" />
+                <filter name="all_record" string="Uncomplete" domain="[('track_status', '!=', 'done')]" />
+
+                <group expand="1" string="To-dos Group By">
+                    <filter name="group_tags" string="Tags" context="{'group_by': 'tags'}" />   
+                    <filter name="group_status" string="Track Status" context="{'group_by': 'track_status'}" />
+                </group>
+            </search>
+
+            
+        </field>
+    </record>
+
+
+    <!-- Action for List View -->
+    <record id="action_todo_list" model="ir.actions.act_window">
+        <field name="name">Todo List</field>
+        <field name="res_model">todolist.tasks</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_todo_tasks_form" model="ir.actions.act_window">
+        <field name="name">Todo List</field>
+        <field name="res_model">todolist.tasks</field>
+        <field name="view_mode">form</field>
+    </record>
+
+    <record id="action_todo_list_uncomplete" model="ir.actions.act_window">
+        <field name="name">Uncomplete</field>
+        <field name="domain">[('track_status', '!=', 'done')]</field>
+        <field name="res_model">todolist.tasks</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_todo_list_complete" model="ir.actions.act_window">
+        <field name="name">Complete</field>
+        <field name="domain">[('track_status', '=', 'done')]</field>
+        <field name="res_model">todolist.tasks</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+
+</odoo>
+
+
