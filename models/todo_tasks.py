@@ -8,6 +8,7 @@ class TodoList(models.Model):
     title = fields.Char(string='Title', required=True)
     tags = fields.Many2many('todolist.tags', string='Tags', required=False)
 
+
     start_date = fields.Datetime(string='Start Date', required=True, default=fields.date.today())
     end_date = fields.Datetime(string='End Date', required=True, default=fields.date.today())
 
@@ -15,30 +16,13 @@ class TodoList(models.Model):
         ('date_check', "CHECK ((start_date <= end_date))", "The start date must be anterior to the end date.")
     ]
 
+
     track_status = fields.Selection(
         [('draft', 'DRAFT'),
          ('in_progress', 'IN PROGRESS'),
          ('done', 'DONE')],
          default = 'draft', string="Track Status", required=True)
 
-
-    ## List
-    task_line_ids = fields.One2many(
-        comodel_name='todolist.task.line',
-        inverse_name='task_id',
-        string="Task Lines")
-
-    ## Attendee
-    attendee_line_ids = fields.One2many(
-        comodel_name='todolist.attendee.line',
-        inverse_name='task_id',
-        string="Attendee Lines")
-
-    def button_in_progress(self):
-        self.write({
-           'track_status': "in_progress"
-       })
-    
     ## Invisible checkbox is_complete
     @api.onchange('track_status')
     def _onchange_track_status(self):
@@ -48,8 +32,37 @@ class TodoList(models.Model):
             else:
                 rec.invisible_is_complete = False
 
+
+
+    ## List
+    task_line_ids = fields.One2many(
+        comodel_name='todolist.task.line',
+        inverse_name='task_id',
+        string="Task Lines")
+
+
+    ## Attendee
+    attendee_line_ids = fields.One2many(
+        comodel_name='todolist.attendee.line',
+        inverse_name='task_id',
+        string="Attendee Lines")
+    
+
+    ## Button Progress
+    def button_in_progress(self):
+        self.write({
+           'track_status': "in_progress"
+       })
+
+
     ## Button Done
-    invisible_btn_done = fields.Boolean(string='Invisible BTN Done', compute='_compute_invisible_btn_done', store=True)
+    def button_done(self):
+        self.ensure_one()
+        self.write({
+           'track_status': "done"
+       })
+        
+    invisible_btn_done = fields.Boolean(string='Invisible Button Done', compute='_compute_invisible_btn_done', store=True)
 
     @api.depends('task_line_ids.task_is_complete', 'track_status')
     def _compute_invisible_btn_done(self):
@@ -67,11 +80,6 @@ class TodoList(models.Model):
             else:
                 rec.invisible_btn_done = True
 
-    def button_done(self):
-        self.ensure_one()
-        self.write({
-           'track_status': "done"
-       })
 
 ## List
 class ToDoListLine(models.Model):
@@ -101,6 +109,7 @@ class TodoListAttendeeLine(models.Model):
 
     task_id = fields.Many2one(comodel_name= 'todolist.tasks', string='Task')
     attendee_name = fields.Many2one(comodel_name= 'res.users', string='Name', required=True)
+
 
 ## Tags
 class TodoTags(models.Model):
