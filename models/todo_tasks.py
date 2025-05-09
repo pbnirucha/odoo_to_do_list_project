@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 
 class TodoList(models.Model):
-    _name = 'todolist.tasks'
+                                                                                                                                                                                                                                                                                                                                                                                                  
     _description = 'To-do List'
     _order = 'id desc'
 
@@ -23,15 +23,6 @@ class TodoList(models.Model):
          ('done', 'DONE')],
          default = 'draft', string="Track Status", required=True)
 
-    ## Invisible checkbox is_complete
-    @api.onchange('track_status')
-    def _onchange_track_status(self):
-        for rec in self.task_line_ids:
-            if self.track_status == 'draft':
-                rec.invisible_is_complete = True
-            else:
-                rec.invisible_is_complete = False
-
 
 
     ## List
@@ -39,6 +30,24 @@ class TodoList(models.Model):
         comodel_name='todolist.task.line',
         inverse_name='task_id',
         string="Task Lines")
+    
+    ## Invisible checkbox is_complete
+    @api.onchange('track_status')
+    def _onchange_track_status(self):
+        # for rec in self.task_line_ids:
+        #     print("---ToDoList for---")
+        #     print(rec)
+        #     print("------")
+        #     if self.track_status == 'draft':
+        #         rec.invisible_is_complete = True
+        #     else:
+        #         rec.invisible_is_complete = False
+        
+        if self.track_status == 'draft':
+            self.task_line_ids.invisible_is_complete = True
+        else:
+            self.task_line_ids.invisible_is_complete = False
+
 
 
     ## Attendee
@@ -66,19 +75,32 @@ class TodoList(models.Model):
 
     @api.depends('task_line_ids.task_is_complete', 'track_status')
     def _compute_invisible_btn_done(self):
-        for rec in self:
-            if rec.task_line_ids:
-                all_is_complete = []
-                for item in rec.task_line_ids:
-                    all_is_complete.append(item.task_is_complete)
+        if self.task_line_ids:
+            all_is_complete = []
+            for item in self.task_line_ids:
+                all_is_complete.append(item.task_is_complete)
                 
-                if all(all_is_complete) and rec.track_status == "in_progress":
-                    rec.invisible_btn_done = False
-                else:
-                    rec.invisible_btn_done = True
-
+            if all(all_is_complete) and self.track_status == "in_progress":
+                self.invisible_btn_done = False
             else:
-                rec.invisible_btn_done = True
+                self.invisible_btn_done = True
+
+        else:
+            self.invisible_btn_done = True
+
+        # for rec in self:
+        #     if rec.task_line_ids:
+        #         all_is_complete = []
+        #         for item in rec.task_line_ids:
+        #             all_is_complete.append(item.task_is_complete)
+                
+        #         if all(all_is_complete) and rec.track_status == "in_progress":
+        #             rec.invisible_btn_done = False
+        #         else:
+        #             rec.invisible_btn_done = True
+
+        #     else:
+        #         rec.invisible_btn_done = True
 
 
 ## List
@@ -86,7 +108,7 @@ class ToDoListLine(models.Model):
     _name = 'todolist.task.line'
     _description = 'Todo List Line'
 
-    task_id = fields.Many2one(comodel_name= 'todolist.tasks', string='Task', auto_join=True )
+    task_id = fields.Many2one(comodel_name= 'todolist.tasks', string='Task', ondelete='cascade')
     task_name = fields.Char(string='Name', required=True)
     task_description = fields.Text(string='Description', required=False)
     task_is_complete = fields.Boolean(string='Is Complete', required=False)
@@ -95,11 +117,17 @@ class ToDoListLine(models.Model):
     ## Invisible checkbox is_complete
     @api.depends('task_id.track_status')
     def _compute_is_complete(self):
-        for rec in self:
-            if rec.task_id.track_status == 'draft':
-                rec.invisible_is_complete = True
-            else:
-                rec.invisible_is_complete = False
+        # for rec in self:
+            
+        #     if rec.task_id.track_status == 'draft':
+        #         rec.invisible_is_complete = True
+        #     else:
+        #         rec.invisible_is_complete = False
+        
+        if self.task_id.track_status == 'draft':
+            self.invisible_is_complete = True
+        else:
+            self.invisible_is_complete = False
 
 
 ## Attendee
