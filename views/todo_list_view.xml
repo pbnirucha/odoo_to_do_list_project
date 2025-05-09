@@ -12,7 +12,7 @@
                 <field name="end_date"/>
                 <field name="tags" 
                        widget="many2many_tags" 
-                       options="{'color_field': 'color', 'no_create_edit': True}"/>
+                       options="{'color_field': 'color'}"/>
                 <!-- <field name="track_status"/>  -->
             </list>
         </field>
@@ -54,6 +54,7 @@
                                          'no_quick_create':True,
                                          'no_create_edit':True,
                                          'no_open': True,}"/>
+                            <!-- <field name="track_status"/>  -->
                         </group>
                         <group>
                             <field name="start_date" readonly="track_status == 'done'"/>
@@ -80,7 +81,9 @@
                                 <list string="Add a line" editable="bottom">
                                     <field name="attendee_name" 
                                            widget="many2one_avatar_user" 
-                                           options="{'no_create_edit':True}" />
+                                           options="{'no_quick_create':True,
+                                         'no_create_edit':True,
+                                         'no_open': True,}" />
                                 </list>
                             </field>
                         </page>
@@ -100,8 +103,8 @@
             <search string="To-dos Search">
                 <field name="track_status"/>
                 <filter name="all_record" string="All" domain="[('track_status', 'in', ['draft', 'in_progress', 'done'])]" />
-                <filter name="all_record" string="Complete" domain="[('track_status', '=', 'done')]" />
-                <filter name="all_record" string="Uncomplete" domain="[('track_status', '!=', 'done')]" />
+                <filter name="complete_record" string="Complete" domain="[('track_status', '=', 'done')]" />
+                <filter name="uncomplete_record" string="Uncomplete" domain="[('track_status', '!=', 'done')]" />
 
                 <group expand="1" string="To-dos Group By">
                     <filter name="group_tags" string="Tags" context="{'group_by': 'tags'}" />   
