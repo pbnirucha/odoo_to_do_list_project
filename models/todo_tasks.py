@@ -59,7 +59,7 @@ class TodoList(models.Model):
            'track_status': "done"
        })
         
-    invisible_btn_done = fields.Boolean(string='Invisible BTN Done', compute='_compute_invisible_btn_done', store=True)
+    invisible_btn_done = fields.Boolean(string='Invisible BTN Done', compute='_compute_invisible_btn_done', default=True)
 
     @api.depends('task_line_ids.task_is_complete', 'track_status')
     def _compute_invisible_btn_done(self):
@@ -88,21 +88,16 @@ class ToDoListLine(models.Model):
     task_name = fields.Char(string='Name', required=True)
     task_description = fields.Text(string='Description', required=False)
     task_is_complete = fields.Boolean(string='Is Complete', required=False)
-    invisible_is_complete = fields.Boolean(string='Invisible Is Complete', compute='_compute_is_complete', store=True)
+    invisible_is_complete = fields.Boolean(string='Invisible Is Complete', compute='_compute_is_complete', default=True)
 
     ## Invisible checkbox is_complete
     @api.depends('task_id.track_status')
     def _compute_is_complete(self):
-        # for rec in self:
-        #     if rec.task_id.track_status == 'draft':
-        #         rec.invisible_is_complete = True
-        #     else:
-        #         rec.invisible_is_complete = False
-
-        if self.task_line_ids:
-            all_is_complete = []
-            for item in self.task_line_ids:
-                all_is_complete.append(item.task_is_complete)
+        for rec in self:
+            if rec.task_id.track_status == 'draft':
+                rec.invisible_is_complete = True
+            else:
+                rec.invisible_is_complete = False
 
 
 ## Attendee
