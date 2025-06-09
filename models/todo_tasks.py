@@ -59,7 +59,7 @@ class TodoList(models.Model):
            'track_status': "done"
        })
         
-    invisible_btn_done = fields.Boolean(string='Invisible BTN Done', compute='_compute_invisible_btn_done', default=True)
+    invisible_btn_done = fields.Boolean(string='Invisible BTN Done', compute='_compute_invisible_btn_done', default=True, store=True)
 
     @api.depends('task_line_ids.task_is_complete', 'track_status')
     def _compute_invisible_btn_done(self):
@@ -88,7 +88,7 @@ class ToDoListLine(models.Model):
     task_name = fields.Char(string='Name', required=True)
     task_description = fields.Text(string='Description', required=False)
     task_is_complete = fields.Boolean(string='Is Complete', required=False)
-    invisible_is_complete = fields.Boolean(string='Invisible Is Complete', compute='_compute_is_complete', default=True)
+    invisible_is_complete = fields.Boolean(string='Invisible Is Complete', compute='_compute_is_complete', default=True, store=True)
 
     ## Invisible checkbox is_complete
     @api.depends('task_id.track_status')
