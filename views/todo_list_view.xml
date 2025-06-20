@@ -6,7 +6,7 @@
         <field name="model">todolist.tasks</field>
         <field name="arch" type="xml">
             
-            <list string="To-dos">
+            <list string="Todo List View">
                 <field name="title"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
@@ -101,11 +101,19 @@
         <field name="arch" type="xml">
             
             <search string="To-dos Search">
-                <field name="track_status"/>
+
+                <!-- Search -->
+                <field name="title" filter_domain="[('title', 'ilike', self)]" />
+                <field name="track_status" filter_domain="[('track_status', 'ilike', self)]"/>
+                <field name="start_date" filter_domain="[('start_date', 'ilike', self)]" />
+                <field name="end_date" filter_domain="[('end_date', 'ilike', self)]" />
+
+                <!-- Filter -->
                 <filter name="all_record" string="All" domain="[('track_status', 'in', ['draft', 'in_progress', 'done'])]" />
                 <filter name="complete_record" string="Complete" domain="[('track_status', '=', 'done')]" />
                 <filter name="uncomplete_record" string="Uncomplete" domain="[('track_status', '!=', 'done')]" />
 
+                <!-- Group by -->
                 <group expand="1" string="To-dos Group By">
                     <filter name="group_tags" string="Tags" context="{'group_by': 'tags'}" />   
                     <filter name="group_status" string="Track Status" context="{'group_by': 'track_status'}" />
@@ -124,12 +132,6 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <record id="action_todo_tasks_form" model="ir.actions.act_window">
-        <field name="name">Todo List</field>
-        <field name="res_model">todolist.tasks</field>
-        <field name="view_mode">form</field>
-    </record>
-
     <record id="action_todo_list_uncomplete" model="ir.actions.act_window">
         <field name="name">Uncomplete</field>
         <field name="domain">[('track_status', '!=', 'done')]</field>
@@ -146,5 +148,3 @@
 
 
 </odoo>
-
-
